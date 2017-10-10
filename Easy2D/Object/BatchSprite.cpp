@@ -8,9 +8,11 @@ BatchSprite::~BatchSprite()
 {
 }
 
-void BatchSprite::addSprite(Sprite * sprite, int z_Order)
+void BatchSprite::add(Sprite * sprite, int z_Order)
 {
 	if (sprite == nullptr) return;
+	// 设置父节点
+	sprite->setParent(this);
 
 	// 设置节点的父场景
 	sprite->setParentScene(this->getParentScene());

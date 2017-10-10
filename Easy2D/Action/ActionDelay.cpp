@@ -25,7 +25,7 @@ void ActionDelay::_init()
 void ActionDelay::_exec(steady_clock::time_point nNow)
 {
 	// 判断时间间隔是否足够
-	if (duration_cast<milliseconds>(nNow - m_nLast).count() > m_nAnimationInterval)
+	if (GetInterval(m_nLast) > m_nAnimationInterval)
 	{
 		this->stop();
 	}

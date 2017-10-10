@@ -1,7 +1,6 @@
 #include "..\easy2d.h"
 #include "..\Win\winbase.h"
 #include "..\EasyX\easyx.h"
-#include <time.h>
 #include <assert.h>
 #include <imm.h>
 #pragma comment(lib, "imm32.lib")
@@ -40,8 +39,6 @@ App * App::get()
 
 int App::run()
 {
-	// 开启批量绘图
-	BeginBatchDraw();
 	// 记录当前时间
 	steady_clock::time_point nLast = steady_clock::now();
 	// 帧间隔
@@ -49,16 +46,16 @@ int App::run()
 	// 时间间隔
 	LONGLONG nInterval = 0LL;
 	// 挂起时长
-	LONGLONG nWaitMS = 0L;
+	LONGLONG nWaitMS = 0LL;
 
-	// 将隐藏的窗口显示
-	ShowWindow(GetHWnd(), SW_NORMAL);
+	// 初始化窗口
+	_initGraph();
+	// 开启批量绘图
+	BeginBatchDraw();
+	// 绘制一次画面
+	_draw();
 	// 运行游戏
 	m_bRunning = true;
-
-	// 启动多线程
-	//std::thread t(std::bind(&App::_mainLoop, this));
-	//t.join();
 
 	// 进入主循环
 	while (m_bRunning)
@@ -66,14 +63,16 @@ int App::run()
 		// 刷新计时
 		::FlushSteadyClock();
 		// 计算时间间隔
-		nInterval = duration_cast<milliseconds>(GetNow() - nLast).count();
+		nInterval = GetInterval(nLast);
 		// 判断间隔时间是否足够
 		if (nInterval >= nAnimationInterval)
 		{
 			// 记录当前时间
-			nLast = GetNow();
+			nLast += milliseconds(nAnimationInterval);
 			// 刷新游戏画面
 			_draw();
+			// 执行主循环
+			_mainLoop();
 		}
 		else
 		{
@@ -100,21 +99,8 @@ void App::_initGraph()
 {
 	// 创建绘图环境
 	initgraph(m_Size.cx, m_Size.cy, m_nWindowMode);
-	// 隐藏当前窗口（防止在加载阶段显示黑窗口）
-	ShowWindow(GetHWnd(), SW_HIDE);
-	// 获取屏幕分辨率
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-	// 获取窗口大小
-	CRect rcWindow;
-	GetWindowRect(GetHWnd(), &rcWindow);
-	// 设置窗口在屏幕居中
-	SetWindowPos(GetHWnd(), HWND_TOP,
-		(screenWidth - rcWindow.Size().cx) / 2,
-		(screenHeight - rcWindow.Size().cy) / 2,
-		rcWindow.Size().cx,
-		rcWindow.Size().cy,
-		SWP_HIDEWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+	// 设置窗口居中
+	WindowCenter(GetHWnd());
 	// 禁用输入法
 	ImmAssociateContext(GetHWnd(), NULL);
 	// 重置绘图环境
@@ -126,11 +112,15 @@ void App::_initGraph()
 		TCHAR title[31];
 		GetWindowText(GetHWnd(), title, 30);
 		m_sTitle = title;
-		if (m_sAppName.empty()) m_sAppName = title;
 	}
 	else
 	{
 		setWindowTitle(m_sTitle);
+	}
+	// 若未设置 AppName，默认设为标题名
+	if (m_sAppName.empty())
+	{
+		m_sAppName = m_sTitle;
 	}
 }
 
@@ -142,35 +132,18 @@ void App::_draw()
 		// 进入下一场景
 		_enterNextScene();
 	}
-	// 断言当前场景非空
-	assert(m_pCurrentScene);
-
 	cleardevice();				// 清空画面
 	m_pCurrentScene->_onDraw();	// 绘制当前场景
 	FlushBatchDraw();			// 刷新画面
+}
 
+void App::_mainLoop()
+{
 	MouseMsg::__exec();			// 鼠标检测
 	KeyMsg::__exec();			// 键盘按键检测
 	Timer::__exec();			// 定时器执行程序
 	ActionManager::__exec();	// 动作管理器执行程序
 	FreePool::__flush();		// 刷新内存池
-}
-
-void App::_mainLoop()
-{
-	while (true)
-	{
-		if (m_bRunning)
-		{
-			MouseMsg::__exec();			// 鼠标检测
-			KeyMsg::__exec();			// 键盘按键检测
-			Timer::__exec();			// 定时器执行程序
-			ActionManager::__exec();	// 动作管理器执行程序
-			FreePool::__flush();		// 刷新内存池
-		}
-		std::this_thread::sleep_for(milliseconds(10));
-	}
-	
 }
 
 void App::createWindow(int width, int height, int mode)
@@ -179,8 +152,6 @@ void App::createWindow(int width, int height, int mode)
 	m_Size.cx = width;
 	m_Size.cy = height;
 	m_nWindowMode = mode;
-	// 创建窗口
-	_initGraph();
 }
 
 void App::createWindow(CSize size, int mode)
@@ -195,9 +166,6 @@ void App::createWindow(TString title, int width, int height, int mode)
 	m_Size.cy = height;
 	m_nWindowMode = mode;
 	m_sTitle = title;
-	if (m_sAppName.empty()) m_sAppName = title;
-	// 创建窗口
-	_initGraph();
 }
 
 void App::createWindow(TString title, CSize size, int mode)
@@ -207,30 +175,10 @@ void App::createWindow(TString title, CSize size, int mode)
 
 void App::setWindowSize(int width, int height)
 {
-	// 游戏正在运行时才允许修改窗口大小
-	assert(s_pInstance->m_bRunning);
-
-	// 获取屏幕分辨率
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-	// 获取窗口大小（包含菜单栏）
-	CRect rcWindow;
-	GetWindowRect(GetHWnd(), &rcWindow);
-	// 获取客户区大小
-	CRect rcClient;
-	GetClientRect(GetHWnd(), &rcClient);
-	// 计算边框大小
-	width += (rcWindow.right - rcWindow.left) - (rcClient.right - rcClient.left);
-	height += (rcWindow.bottom - rcWindow.top) - (rcClient.bottom - rcClient.top);
-	// 销毁当前窗口
-	// DestroyWindow(GetHWnd());/* 无法操作多线程导致失效 */
-	// 修改窗口大小，并设置窗口在屏幕居中
-	SetWindowPos(GetHWnd(), HWND_TOP,
-		(screenWidth - width) / 2,
-		(screenHeight - height) / 2,
-		width,
-		height,
-		SWP_SHOWWINDOW);
+	// 修改窗口大小
+	Resize(NULL, width, height);
+	// 设置窗口居中
+	WindowCenter(GetHWnd());
 	// 重置窗口属性
 	reset();
 }

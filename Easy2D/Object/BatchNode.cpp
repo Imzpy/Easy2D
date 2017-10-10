@@ -57,6 +57,8 @@ void BatchNode::add(Node * child, int z_Order)
 	child->retain();
 	// 修改子节点位置
 	child->move(getPos());
+	// 设置父节点
+	child->setParent(this);
 
 	// 按 z 轴顺序插入节点
 	size_t size = m_vChildren.size();

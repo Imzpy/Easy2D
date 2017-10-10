@@ -88,7 +88,7 @@ void Timer::__exec()
 			continue;
 		}
 		// 判断时间间隔是否足够
-		while (duration_cast<milliseconds>(GetNow() - timer->m_nLast).count() > timer->m_nAnimationInterval)
+		while (GetInterval(timer->m_nLast) > timer->m_nAnimationInterval)
 		{
 			// 重新记录时间
 			timer->m_nLast += milliseconds(timer->m_nAnimationInterval);

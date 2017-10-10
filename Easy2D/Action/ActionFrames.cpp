@@ -33,7 +33,7 @@ void ActionFrames::_init()
 void ActionFrames::_exec(steady_clock::time_point nNow)
 {
 	// 判断时间间隔是否足够
-	while (duration_cast<milliseconds>(nNow - m_nLast).count() > m_nAnimationInterval)
+	while (GetInterval(m_nLast) > m_nAnimationInterval)
 	{
 		// 重新记录时间
 		m_nLast += milliseconds(m_nAnimationInterval);

@@ -837,7 +837,7 @@ public:
 	virtual ~BatchSprite();
 
 	// 添加精灵
-	void addSprite(Sprite * sprite, int z_Order = 0);
+	void add(Sprite * sprite, int z_Order = 0);
 	// 删除精灵
 	bool delSprite(Sprite * child);
 	// 获取精灵数量
