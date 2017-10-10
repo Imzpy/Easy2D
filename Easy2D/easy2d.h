@@ -526,6 +526,10 @@ public:
 	virtual int getZOrder() const;
 	// 设置节点绘图顺序（0为最先绘制，显示在最底层）
 	virtual void setZOrder(int z);
+	// 获取父节点
+	virtual Node* getParent();
+	// 设置父节点
+	virtual void setParent(Node* parent);
 	// 获取节点所在场景
 	Scene * getParentScene();
 
@@ -534,6 +538,7 @@ protected:
 	bool	m_bDisplay;
 	Scene*	m_pScene;
 	CPoint	m_Pos;
+	Node*	m_pParent;
 
 protected:
 	virtual bool _exec(bool active);

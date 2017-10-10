@@ -2,18 +2,23 @@
 
 Node::Node() :
 	m_nZOrder(0),
-	m_bDisplay(true)
+	m_bDisplay(true),
+	m_pParent(nullptr)
 {
 }
 
 Node::Node(CPoint p) :
+	m_nZOrder(0),
+	m_bDisplay(true),
+	m_pParent(nullptr),
 	m_Pos(p)
 {
 }
 
 Node::Node(int x, int y) :
 	m_nZOrder(0),
-	m_bDisplay(true)
+	m_bDisplay(true),
+	m_pParent(nullptr)
 {
 }
 
@@ -47,22 +52,36 @@ CPoint Node::getPos() const
 
 void Node::setX(int x)
 {
-	m_Pos.x = x;
+	m_Pos.x = m_pParent ? m_pParent->getX() + x : x;
 }
 
 void Node::setY(int y)
 {
-	m_Pos.y = y;
+	m_Pos.y = m_pParent ? m_pParent->getY() + y : y;
 }
 
 void Node::setPos(int x, int y)
 {
-	m_Pos.SetPoint(x, y);
+	if (m_pParent)
+	{
+		m_Pos.SetPoint(m_pParent->getX() + x, m_pParent->getY() + y);
+	}
+	else
+	{
+		m_Pos.SetPoint(x, y);
+	}
 }
 
 void Node::setPos(CPoint p)
 {
-	m_Pos = p;
+	if (m_pParent)
+	{
+		m_Pos = m_pParent->getPos() + p;
+	}
+	else
+	{
+		m_Pos = p;
+	}
 }
 
 void Node::move(int x, int y)
@@ -83,6 +102,19 @@ int Node::getZOrder() const
 void Node::setZOrder(int z)
 {
 	m_nZOrder = z;
+}
+
+Node * Node::getParent()
+{
+	return m_pParent;
+}
+
+void Node::setParent(Node * parent)
+{
+	if (parent)
+	{
+		m_pParent = parent;
+	}
 }
 
 Scene * Node::getParentScene()

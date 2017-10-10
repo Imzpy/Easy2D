@@ -74,22 +74,50 @@ CRect RectNode::getRect() const
 
 void RectNode::setX(int x)
 {
-	m_Rect.MoveToX(x);
+	if (m_pParent)
+	{
+		m_Rect.MoveToX(m_pParent->getX() + x);
+	}
+	else
+	{
+		m_Rect.MoveToX(x);
+	}
 }
 
 void RectNode::setY(int y)
 {
-	m_Rect.MoveToY(y);
+	if (m_pParent)
+	{
+		m_Rect.MoveToY(m_pParent->getY() + y);
+	}
+	else
+	{
+		m_Rect.MoveToY(y);
+	}
 }
 
 void RectNode::setPos(int x, int y)
 {
-	m_Rect.MoveToXY(x, y);		// 修改矩形位置
+	if (m_pParent)
+	{
+		m_Rect.MoveToXY(m_pParent->getX() + x, m_pParent->getY() + y);
+	}
+	else
+	{
+		m_Rect.MoveToXY(x, y);
+	}
 }
 
 void RectNode::setPos(CPoint p)
 {
-	m_Rect.MoveToXY(p);			// 修改矩形位置
+	if (m_pParent)
+	{
+		m_Rect.MoveToXY(m_pParent->getPos() + p);
+	}
+	else
+	{
+		m_Rect.MoveToXY(p);
+	}
 }
 
 void RectNode::move(int x, int y)
