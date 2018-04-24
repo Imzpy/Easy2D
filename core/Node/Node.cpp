@@ -616,16 +616,6 @@ void e2d::Node::addColliableName(String collliderName)
 	m_vColliders.insert(hash);
 }
 
-#if HIGHER_THAN_VS2012
-void e2d::Node::addColliableName(const InitList<String>& vCollliderName)
-{
-	for (const auto &name : vCollliderName)
-	{
-		this->addColliableName(name);
-	}
-}
-#endif
-
 void e2d::Node::removeColliableName(String collliderName)
 {
 	unsigned int hash = collliderName.getHashCode();
@@ -671,16 +661,6 @@ void e2d::Node::addChild(Node * child, int order  /* = 0 */)
 		m_bSortChildrenNeeded = true;
 	}
 }
-
-#if HIGHER_THAN_VS2012
-void e2d::Node::addChild(const InitList<Node*>& vNodes, int order)
-{
-	for (const auto &node : vNodes)
-	{
-		this->addChild(node, order);
-	}
-}
-#endif
 
 e2d::Node * e2d::Node::getParent() const
 {

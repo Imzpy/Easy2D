@@ -11,15 +11,6 @@ namespace e2d
 {
 
 
-#if HIGHER_THAN_VS2012
-
-// 初始化列表
-template <typename T>
-using InitList = std::initializer_list<T>;
-
-#endif
-
-
 struct Size;
 
 // 表示坐标的结构体
@@ -726,14 +717,6 @@ public:
 		Node * child,	/* 要添加的节点 */
 		int zOrder = 0	/* 渲染顺序 */
 	);
-
-#if HIGHER_THAN_VS2012
-	// 添加多个节点到场景
-	virtual void add(
-		const InitList<Node*>& vNodes,	/* 节点数组 */
-		int order = 0					/* 渲染顺序 */
-	);
-#endif
 
 	// 删除子节点
 	bool remove(

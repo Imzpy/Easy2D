@@ -406,19 +406,12 @@ public:
 	// 创建顺序动作
 	ActionSequence();
 
-#if HIGHER_THAN_VS2012
-	// 创建顺序动作
-	ActionSequence(
-		const InitList<Action*>& vActions	/* 动作数组 */
-	);
-#else
 	// 创建顺序动作
 	ActionSequence(
 		int number,			/* 动作数量 */
 		Action * action,	/* 第一个动作 */
 		...
 	);
-#endif
 
 	virtual ~ActionSequence();
 
@@ -427,19 +420,12 @@ public:
 		Action * action
 	);
 
-#if HIGHER_THAN_VS2012
-	// 在结尾添加多个动作
-	void add(
-		const InitList<Action*>& vActions	/* 动作数组 */
-	);
-#else
 	// 在结尾添加多个动作
 	void add(
 		int number,			/* 动作数量 */
 		Action * action,	/* 第一个动作 */
 		...
 	);
-#endif
 
 	// 获取该动作的拷贝对象
 	virtual ActionSequence * clone() const override;
@@ -545,18 +531,6 @@ public:
 		double interval		/* 帧间隔（秒） */
 	);
 
-#if HIGHER_THAN_VS2012
-	// 创建帧动画
-	Animation(
-		const InitList<Image*>& vImages	/* 关键帧数组 */
-	);
-
-	// 创建特定帧间隔的帧动画
-	Animation(
-		double interval,				/* 帧间隔（秒） */
-		const InitList<Image*>& vImages	/* 关键帧数组 */
-	);
-#else
 	// 创建帧动画
 	Animation(
 		int number,			/* 帧数量 */
@@ -571,7 +545,6 @@ public:
 		Image * frame,		/* 第一帧 */
 		...
 	);
-#endif
 
 	virtual ~Animation();
 
@@ -580,19 +553,12 @@ public:
 		Image * frame	/* 关键帧 */
 	);
 
-#if HIGHER_THAN_VS2012
-	// 添加多个关键帧
-	void add(
-		const InitList<Image*>& vImages	/* 关键帧数组 */
-	);
-#else
 	// 添加多个关键帧
 	void add(
 		int number,			/* 帧数量 */
 		Image * frame,		/* 第一帧 */
 		...
 	);
-#endif
 
 	// 设置每一帧的时间间隔
 	void setInterval(
@@ -797,24 +763,6 @@ namespace e2d
 			return new (std::nothrow) ActionFunc(func);
 		}
 
-#if HIGHER_THAN_VS2012
-		// 创建顺序动作
-		inline e2d::ActionSequence* Sequence(
-			const InitList<Action*>& vActions	/* 动作数组 */
-		)
-		{
-			return new (std::nothrow) ActionSequence(vActions);
-		}
-
-		// 创建特定帧间隔的帧动画
-		inline e2d::Animation* Animate(
-			double interval,					/* 帧间隔（秒） */
-			const InitList<Image*>& vFrames		/* 关键帧数组 */
-		)
-		{
-			return new (std::nothrow) Animation(interval, vFrames);
-		}
-#else
 		// 创建顺序动作
 		inline e2d::ActionSequence* Sequence(
 			int number,			/* 动作数量 */
@@ -861,6 +809,5 @@ namespace e2d
 			}
 			return animation;
 		}
-#endif
 	}
 }

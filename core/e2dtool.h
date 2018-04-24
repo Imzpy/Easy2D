@@ -109,54 +109,11 @@ public:
 	);
 
 private:
+	void __sendCommand(int nCommand, DWORD_PTR param1 = 0, DWORD_PTR parma2 = 0);
+
 	static bool __init();
 
 	static void __uninit();
-
-#if HIGHER_THAN_VS2010
-
-public:
-	// 获取 IXAudio2 对象
-	static IXAudio2 * getIXAudio2();
-
-	// 获取 IXAudio2MasteringVoice 对象
-	static IXAudio2MasteringVoice * getIXAudio2MasteringVoice();
-
-	// 获取 IXAudio2SourceVoice 对象
-	IXAudio2SourceVoice* getIXAudio2SourceVoice() const;
-
-protected:
-	bool _readMMIO();
-
-	bool _resetFile();
-
-	bool _read(
-		BYTE* pBuffer,
-		DWORD dwSizeToRead
-	);
-
-	bool _findMediaFileCch(
-		wchar_t* strDestPath,
-		int cchDest,
-		const wchar_t * strFilename
-	);
-
-protected:
-	bool m_bOpened;
-	mutable bool m_bPlaying;
-	DWORD m_dwSize;
-	CHAR* m_pResourceBuffer;
-	BYTE* m_pbWaveData;
-	HMMIO m_hmmio;
-	MMCKINFO m_ck;
-	MMCKINFO m_ckRiff;
-	WAVEFORMATEX* m_pwfx;
-	IXAudio2SourceVoice* m_pSourceVoice;
-
-#else
-
-protected:
-	void _sendCommand(int nCommand, DWORD_PTR param1 = 0, DWORD_PTR parma2 = 0);
 
 	static LRESULT WINAPI MusicProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
@@ -166,8 +123,6 @@ protected:
 	UINT		m_nMusicID;
 	bool        m_bPlaying;
 	int			m_nRepeatTimes;
-
-#endif
 };
 
 

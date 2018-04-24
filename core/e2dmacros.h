@@ -27,19 +27,6 @@
 
 #define INITGUID
 
-
-#if _MSC_VER > 1700
-#define HIGHER_THAN_VS2012 1
-#else
-#define HIGHER_THAN_VS2012 0
-#endif
-
-#if _MSC_VER > 1600
-#define HIGHER_THAN_VS2010 1
-#else
-#define HIGHER_THAN_VS2010 0
-#endif
-
 // Windows Header Files
 #include <windows.h>
 #include <wincodec.h>
@@ -58,11 +45,6 @@
 #pragma comment(lib, "dwrite.lib")
 #pragma comment(lib, "windowscodecs.lib")
 #pragma comment(lib, "winmm.lib")
-
-#if HIGHER_THAN_VS2010
-#include <xaudio2.h>
-#pragma comment(lib, "xaudio2.lib")
-#endif
 
 
 #ifndef HINST_THISCOMPONENT
@@ -88,9 +70,5 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
 
-#if HIGHER_THAN_VS2010
-#define FOR_LOOP(i, container) for (auto i : (container))
-#else
 #define FOR_LOOP(i, container)  auto i = (container.begin() == container.end()) ? NULL : (*(container.begin())); \
 	for (auto __iter__=(container.begin()); (__iter__ != (container.end())) && (i = (*__iter__)); __iter__++)
-#endif

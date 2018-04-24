@@ -339,13 +339,6 @@ public:
 		String collliderName
 	);
 
-#if HIGHER_THAN_VS2012
-	// 添加多个可碰撞节点的名称
-	virtual void addColliableName(
-		const InitList<String>& vCollliderName	/* 名称数组 */
-	);
-#endif
-
 	// 移除可碰撞节点的名称
 	virtual void removeColliableName(
 		String collliderName
@@ -356,14 +349,6 @@ public:
 		Node * child,
 		int order = 0	/* 渲染顺序 */
 	);
-
-#if HIGHER_THAN_VS2012
-	// 添加多个子节点
-	virtual void addChild(
-		const InitList<Node*>& vNodes,	/* 节点数组 */
-		int order = 0							/* 渲染顺序 */
-	);
-#endif
 
 	// 执行动画
 	virtual void runAction(
@@ -942,19 +927,12 @@ public:
 	// 创建空菜单
 	Menu();
 
-#if HIGHER_THAN_VS2012
-	// 创建菜单
-	Menu(
-		const InitList<Button*>& vButtons	/* 按钮数组 */
-	);
-#else
 	// 创建菜单
 	Menu(
 		int number,			/* 菜单中按钮的数量 */
 		Button * button1,	/* 第一个按钮 */
 		...
 	);
-#endif
 
 	// 获取菜单是否禁用
 	bool isEnable() const;
